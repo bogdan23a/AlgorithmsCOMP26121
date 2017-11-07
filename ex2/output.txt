@@ -1,0 +1,3 @@
+
+gHERASIM bOGDAN
+Read 15 characters in total, 12 converted to upper-case, 3 to lower-case

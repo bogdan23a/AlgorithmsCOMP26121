@@ -1,0 +1,60 @@
+TASK A
+(a) 
+1. less efficient
+
+element := -1
+for each i in A
+  if(A[i] = i)
+    element = i
+end for
+if(element = -1)
+ output : "No"
+else
+  output : element
+
+2. binary search
+
+left := 0
+right := n-1
+exit := -1
+while left < right
+    middle := (left + right) / 2
+    if(A[middle] < middle)
+      left := middle + 1
+    else
+      if(A[middle] > middle)
+        right := middle - 1
+    else
+      exit : middle
+if(exit = -1)
+  output : "No"
+else 
+  output : exit
+(b)
+1. less efficient
+
+It is necessary and sufficient to check every element once and see if it is 
+equal to it's index. If we find such an element we assign the value to a
+variable. As every index is positive we can initially assign this variable a
+negative number so we will know wheather the algorithm found a value suited 
+or not and display the appropriate message.
+
+2.binary search
+
+Have an exit variable initialised to -1 so that we know if we found the fixed 
+point or not. Take two variables to keep track of left and right margins of the
+array and loop so that when we update the margins if the left is greater than
+the right one the loop terminates. Have another variable that points to the 
+middle between the two margins. In the loop check if the element in the middle
+of the margins is lower that the index of the middle and if it is update the
+left margin to take the element after the middle or else, if it is lower 
+make the right margin take the value of the element before the middle. If it
+matches the element in the middle we have found the fixed point and the 
+exit variable takes that value and the loop should terminate as the two 
+indexes match. We then check if the exit variable has changed and display 
+the appropriate message
+
+(c)
+
+1. O(n)
+2. O(log(n))
