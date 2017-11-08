@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-/* these arrays are just used to give the parameters to 'insert',
-   to create the 'people' array 
-*/
+
 enum staff_or_student{
     STAFF,
     STUDENT,
@@ -24,8 +22,6 @@ enum staff_or_student TYPE[HOW_MANY] = {STAFF, STAFF, NEITHER, STUDENT, STUDENT,
 
 
 
-
-/* declare your struct for a person here */
  struct Person{
   char *name;
   int age;
@@ -65,15 +61,10 @@ struct Person *newPerson(char *name, char *roomNumber, char *programmeName)
 
 static struct Person *insertStart(struct Person *people, char *name, char *roomNumber, char *programmeName, int age) 
 {
-  /* put name and age into the next free place in the array parameter here */
   struct Person* newP = newPerson(name,roomNumber,programmeName);
-  
   newP->name = name;
   newP->age = age;
   newP->next = people;
-  /* modify nextfreeplace here */
-  //(*nextfreeplace)++;
-  //printf("%s %d\n", newP->name, newP->age);
   return newP;
 }
 
@@ -102,12 +93,13 @@ static struct Person *insertEnd(struct Person *people, char *name, char *roomNum
   }
 
 }
-
+//
+//read data and creates lists elements accordingly
+//
 static struct Person *insertSorted(struct Person *people, char *name, int age, 
                                    enum staff_or_student t, char *studentData, 
                                    char *staffData, int (*compare_people)())
 {
-  printf("s\n");
   struct Person* newP = newPerson(name, staffData, studentData);
 
   newP->name = name;
@@ -123,8 +115,6 @@ static struct Person *insertSorted(struct Person *people, char *name, int age,
   if(people == NULL || compare_people(people,newP) > 0)
   {
     newP->next = people;
-    printf("%s %d %s %s %s\n", newP->name, newP->age, newP->t, 
-                        newP->data.programmeName, newP->data.roomNumber);
     return newP;
   }
   else
@@ -135,8 +125,6 @@ static struct Person *insertSorted(struct Person *people, char *name, int age,
 
     newP->next = lastP->next;
     lastP->next = newP;
-    printf("%s %d %s %s %s\n", newP->name, newP->age, newP->t, 
-                        newP->data.programmeName, newP->data.roomNumber);
     return people;
   }
 
@@ -144,28 +132,30 @@ static struct Person *insertSorted(struct Person *people, char *name, int age,
 
 int main(int argc, char **argv) 
 {
-  //int nextfreeplace = 0;
-
-  /* declare the people array here */
   struct Person *people = NULL;
   for (int i = 0; i< HOW_MANY; i++) 
   {
     people = insertSorted(people, names[i], ages[i], TYPE[i], studentData[i], 
                           staffData[i] ,compare_people_by_age);
   }
-
-  //printf("\n");
-  /* print the people array here*/
+  //
+  //
+  //
   while(people != NULL)
   {
-    printf("x\n");
-    printf("%s %d %s %s %s\n", people->name, people->age, people->t, 
-                        people->data.programmeName, people->data.roomNumber);
+    if(people->t == 0)
+        printf("%s %d %s %s\n", people->name, people->age,"STAFF", 
+                        people->data.programmeName);
+    else if(people->t == 1)
+        printf("%s %d %s %s\n", people->name, people->age,"STUDENT", 
+                        people->data.programmeName);
+    else
+        printf("%s %d %s %s\n", people->name, people->age,"NEITHER", 
+                        people->data.programmeName);
     people = people->next;
 
     
   }
-  printf("%s %s\n", people->data.programmeName ,people->next->data.programmeName);
 
   while(people  != NULL)
   {
