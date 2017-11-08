@@ -103,13 +103,12 @@ static struct Person *insertEnd(struct Person *people, char *name, char *roomNum
 
 }
 
-static struct Person *insertSorted(struct Person *people, char *name, 
-                                   char *roomNumber, char *programmeName, int age, 
+static struct Person *insertSorted(struct Person *people, char *name, int age, 
                                    enum staff_or_student t, char *studentData, 
                                    char *staffData, int (*compare_people)())
 {
   printf("s\n");
-  struct Person* newP = newPerson(name, roomNumber, programmeName);
+  struct Person* newP = newPerson(name, staffData, studentData);
 
   newP->name = name;
 
@@ -137,7 +136,7 @@ static struct Person *insertSorted(struct Person *people, char *name,
     newP->next = lastP->next;
     lastP->next = newP;
     printf("%s %d %s %s %s\n", newP->name, newP->age, newP->t, 
-                        newP->data->programmeName, newP->data.roomNumber);
+                        newP->data.programmeName, newP->data.roomNumber);
     return people;
   }
 
@@ -170,8 +169,8 @@ int main(int argc, char **argv)
 
   while(people  != NULL)
   {
-    free(people->data->programmeName);
-    free(people->data->roomNumber);
+    free(people->data.programmeName);
+    free(people->data.roomNumber);
     free(people->name);
     free(people);
 
