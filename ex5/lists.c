@@ -31,7 +31,7 @@ enum staff_or_student TYPE[HOW_MANY] = {STAFF, STAFF, NEITHER, STUDENT, STUDENT,
   int age;
   struct Person *next;
   enum staff_or_student t;
-  union Data *data;
+  union Data data;
 };
 
 
@@ -50,53 +50,23 @@ int compare_people_by_age(struct Person *pers1, struct Person *pers2)
     else
     return -1;
 }
-struct Person *newPerson()
+struct Person *newPerson(char *name, char *roomNumber, char *programmeName)
 {
-
   struct Person *returnValue = (struct Person*) malloc(sizeof(struct Person));
-
+  returnValue->name = (char*) malloc((strlen(name) - 1) * sizeof(char));
+  returnValue->data.roomNumber =(char*) malloc((strlen(roomNumber) - 1) * sizeof(char));
+  returnValue->data.programmeName =(char*) malloc((strlen(programmeName) - 1 ) * sizeof(char));
+  
   if(returnValue == NULL)
     return NULL;
-
-  returnValue->data =(union Data*) malloc(sizeof(union Data));
-  /*returnValue->name = (char*) malloc(sizeof(char));
-  returnValue->t = (enum staff_or_student) malloc(sizeof(enum staff_or_student));
-  
-  returnValue->data->roomNumber =(char*) malloc(sizeof(char));
-  returnValue->data->programmeName =(char*) malloc(sizeof(char));
-  if(returnValue->name == NULL)
-  {
-   free(returnValue);
-   return NULL;
-  }
-  if(returnValue->t == NULL)
-  {
-    free(returnValue);
-    return NULL;
-  }
-  if(returnValue->data == NULL)
-  {
-    free(returnValue);
-    return NULL;
-  }
-  if(returnValue->data->roomNumber == NULL)
-  {
-    free(returnValue);
-    return NULL;
-  }
-  if(returnValue->data->programmeName == NULL)
-  {
-    free(returnValue);
-    return NULL;
-  }*/
   return returnValue;
 }
 
 
-static struct Person *insertStart(struct Person *people, char *name, int age) 
+static struct Person *insertStart(struct Person *people, char *name, char *roomNumber, char *programmeName, int age) 
 {
   /* put name and age into the next free place in the array parameter here */
-  struct Person* newP = newPerson();
+  struct Person* newP = newPerson(name,roomNumber,programmeName);
   
   newP->name = name;
   newP->age = age;
@@ -107,9 +77,9 @@ static struct Person *insertStart(struct Person *people, char *name, int age)
   return newP;
 }
 
-static struct Person *insertEnd(struct Person *people, char *name, int age)
+static struct Person *insertEnd(struct Person *people, char *name, char *roomNumber, char *programmeName, int age)
 {
-  struct Person* newP = newPerson();
+  struct Person* newP = newPerson(name, roomNumber, programmeName);
 
   if(people == NULL)
   {
@@ -133,12 +103,13 @@ static struct Person *insertEnd(struct Person *people, char *name, int age)
 
 }
 
-static struct Person *insertSorted(struct Person *people, char *name, int age, 
+static struct Person *insertSorted(struct Person *people, char *name, 
+                                   char *roomNumber, char *programmeName, int age, 
                                    enum staff_or_student t, char *studentData, 
                                    char *staffData, int (*compare_people)())
 {
   printf("s\n");
-  struct Person* newP = newPerson();
+  struct Person* newP = newPerson(name, roomNumber, programmeName);
 
   newP->name = name;
 
@@ -146,15 +117,15 @@ static struct Person *insertSorted(struct Person *people, char *name, int age,
 
   newP->t = t;
 
-  newP->data->programmeName = studentData;
+  newP->data.programmeName = studentData;
   
-  newP->data->roomNumber = staffData;
+  newP->data.roomNumber = staffData;
 
   if(people == NULL || compare_people(people,newP) > 0)
   {
     newP->next = people;
     printf("%s %d %s %s %s\n", newP->name, newP->age, newP->t, 
-                        newP->data->programmeName, newP->data->roomNumber);
+                        newP->data.programmeName, newP->data.roomNumber);
     return newP;
   }
   else
@@ -166,7 +137,7 @@ static struct Person *insertSorted(struct Person *people, char *name, int age,
     newP->next = lastP->next;
     lastP->next = newP;
     printf("%s %d %s %s %s\n", newP->name, newP->age, newP->t, 
-                        newP->data->programmeName, newP->data->roomNumber);
+                        newP->data->programmeName, newP->data.roomNumber);
     return people;
   }
 
@@ -190,19 +161,18 @@ int main(int argc, char **argv)
   {
     printf("x\n");
     printf("%s %d %s %s %s\n", people->name, people->age, people->t, 
-                        people->data->programmeName, people->data->roomNumber);
+                        people->data.programmeName, people->data.roomNumber);
     people = people->next;
 
     
   }
-  printf("%s %s\n", people->data->programmeName ,people->next->data->programmeName);
+  printf("%s %s\n", people->data.programmeName ,people->next->data.programmeName);
 
   while(people  != NULL)
   {
-    /*free(people->data->programmeName);
+    free(people->data->programmeName);
     free(people->data->roomNumber);
-    free(people->data);
-    free(people->name);*/
+    free(people->name);
     free(people);
 
     people = people->next;
