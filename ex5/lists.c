@@ -29,7 +29,10 @@ enum staff_or_student TYPE[HOW_MANY] = {STAFF, STAFF, NEITHER, STUDENT, STUDENT,
   enum staff_or_student t;
   union Data data;
 };
-
+void initUnion()
+{
+    
+}
 
 int compare_people_by_name(struct Person *pers1, struct Person *pers2)
 {
@@ -108,9 +111,10 @@ static struct Person *insertSorted(struct Person *people, char *name, int age,
 
   newP->t = t;
 
-  newP->data.programmeName = studentData;
-  
-  newP->data.roomNumber = staffData;
+  if(studentData != "")
+    newP->data.programmeName = studentData;
+  else
+     newP->data.roomNumber = staffData;
 
   if(people == NULL || compare_people(people,newP) > 0)
   {
@@ -145,13 +149,13 @@ int main(int argc, char **argv)
   {
     if(people->t == 0)
         printf("%s %d %s %s\n", people->name, people->age,"STAFF", 
-                        people->data.programmeName);
+                        people->data.roomNumber);
     else if(people->t == 1)
         printf("%s %d %s %s\n", people->name, people->age,"STUDENT", 
-                        people->data.programmeName);
+                        people->data.roomNumber);
     else
         printf("%s %d %s %s\n", people->name, people->age,"NEITHER", 
-                        people->data.programmeName);
+                        people->data.roomNumber);
     people = people->next;
 
     
