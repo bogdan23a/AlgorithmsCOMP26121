@@ -133,10 +133,36 @@ static struct Person *insertSorted(struct Person *people, char *name, int age,
   }
 
 }
+static struct Person *insert_sorted(struct Person *people, char *name, int age, 
+                                   enum staff_or_student t, char *studentData, 
+                                   char *staffData, int (*compare_people)())
+{
+  struct Person *newP = newPerson(name,staffData,studentData);
+  
+  newP->name = name;
 
+  newP->age = age;
+
+  newP->t = t;
+
+  if(studentData != "")
+    newP->data.programmeName = studentData;
+  else
+     newP->data.roomNumber = staffData;
+     
+  ptr2ptr = &people;
+  
+  while(ptr2ptr != NULL && compare_people(**ptr2ptr, newP) < 0)
+  {
+      ptr2ptr = &newP;
+  }
+  
+  newP
+}
 int main(int argc, char **argv) 
 {
-  struct Person *people = NULL;
+  struct Perosn *people = NULL;
+  
   for (int i = 0; i< HOW_MANY; i++) 
   {
     people = insertSorted(people, names[i], ages[i], TYPE[i], studentData[i], 
