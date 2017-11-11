@@ -149,23 +149,35 @@ static struct Person *insert_sorted(struct Person *people, char *name, int age,
     newP->data.programmeName = studentData;
   else
      newP->data.roomNumber = staffData;
-     
+  
+  struct Person **ptr2ptr = NULL;
   ptr2ptr = &people;
   
-  while(ptr2ptr != NULL && compare_people(**ptr2ptr, newP) < 0)
-  {
-      ptr2ptr = &newP;
+  while((*ptr2ptr) != NULL && compare_people((*ptr2ptr), newP) < 0){
+      *ptr2ptr = (*ptr2ptr)->next;
+      printf("%s\n", (*ptr2ptr)->name);
   }
+  newP->next = *ptr2ptr;
+  *ptr2ptr = newP;
   
-  newP
+  
+  /*for(ptr2ptr = &people; *ptr2ptr != NULL; ptr2ptr = &(*ptr2ptr)->next)
+  {
+      printf("x\n");
+      if(compare_people((*ptr2ptr),newP) < 0)
+        *ptr2ptr = (*ptr2ptr)->next;
+  }
+  newP->next = *ptr2ptr;
+  *ptr2ptr = newP;*/
+  return people;
 }
 int main(int argc, char **argv) 
 {
-  struct Perosn *people = NULL;
+  struct Person *people = NULL;
   
   for (int i = 0; i< HOW_MANY; i++) 
   {
-    people = insertSorted(people, names[i], ages[i], TYPE[i], studentData[i], 
+    people = insert_sorted(people, names[i], ages[i], TYPE[i], studentData[i], 
                           staffData[i] ,compare_people_by_age);
   }
   //
