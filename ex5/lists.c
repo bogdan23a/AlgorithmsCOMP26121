@@ -29,9 +29,24 @@ enum staff_or_student TYPE[HOW_MANY] = {STAFF, STAFF, NEITHER, STUDENT, STUDENT,
   enum staff_or_student t;
   union Data data;
 };
-void initUnion()
+void printList(struct Person *people)
 {
-    
+
+  while(people != NULL)
+  {
+      
+    if(people->t == 0)
+        printf("%s %d %s %s\n", people->name, people->age,"STAFF", 
+                        people->data.roomNumber);
+    else if(people->t == 1)
+        printf("%s %d %s %s\n", people->name, people->age,"STUDENT", 
+                        people->data.roomNumber);
+    else
+        printf("%s %d %s %s\n", people->name, people->age,"NEITHER", 
+                        people->data.roomNumber);
+    people = people->next;
+
+  }
 }
 
 int compare_people_by_name(struct Person *pers1, struct Person *pers2)
@@ -151,17 +166,17 @@ static struct Person *insert_sorted(struct Person *people, char *name, int age,
      newP->data.roomNumber = staffData;
   
   struct Person **ptr2ptr = NULL;
+  struct Person *aux = people;
   ptr2ptr = &people;
   
   while((*ptr2ptr) != NULL && compare_people((*ptr2ptr), newP) < 0){
       *ptr2ptr = (*ptr2ptr)->next;
-      printf("%s\n", (*ptr2ptr)->name);
   }
   newP->next = *ptr2ptr;
   *ptr2ptr = newP;
   
   
-  /*for(ptr2ptr = &people; *ptr2ptr != NULL; ptr2ptr = &(*ptr2ptr)->next)
+ /* for(ptr2ptr = &people; *ptr2ptr != NULL; ptr2ptr = &(*ptr2ptr)->next)
   {
       printf("x\n");
       if(compare_people((*ptr2ptr),newP) < 0)
@@ -169,6 +184,9 @@ static struct Person *insert_sorted(struct Person *people, char *name, int age,
   }
   newP->next = *ptr2ptr;
   *ptr2ptr = newP;*/
+  
+ // printList(people);
+  
   return people;
 }
 int main(int argc, char **argv) 
@@ -183,22 +201,9 @@ int main(int argc, char **argv)
   //
   //
   //
-  while(people != NULL)
-  {
-    if(people->t == 0)
-        printf("%s %d %s %s\n", people->name, people->age,"STAFF", 
-                        people->data.roomNumber);
-    else if(people->t == 1)
-        printf("%s %d %s %s\n", people->name, people->age,"STUDENT", 
-                        people->data.roomNumber);
-    else
-        printf("%s %d %s %s\n", people->name, people->age,"NEITHER", 
-                        people->data.roomNumber);
-    people = people->next;
-
-    
-  }
-
+   
+  printList(people);
+   
   while(people  != NULL)
   {
     free(people->data.programmeName);
