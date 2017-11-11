@@ -47,6 +47,7 @@ void printList(struct Person *people)
     people = people->next;
 
   }
+  printf("\n");
 }
 
 int compare_people_by_name(struct Person *pers1, struct Person *pers2)
@@ -64,31 +65,32 @@ int compare_people_by_age(struct Person *pers1, struct Person *pers2)
     else
     return -1;
 }
-struct Person *newPerson(char *name, char *roomNumber, char *programmeName)
+struct Person *newPerson(char *name, char *roomNumber, char *programmeName, int age, enum staff_or_student t)
 {
-  struct Person *returnValue = (struct Person*) malloc(sizeof(struct Person));
-  returnValue->name = (char*) malloc((strlen(name) - 1) * sizeof(char));
-  returnValue->data.roomNumber =(char*) malloc((strlen(roomNumber) - 1) * sizeof(char));
-  returnValue->data.programmeName =(char*) malloc((strlen(programmeName) - 1 ) * sizeof(char));
-  
-  if(returnValue == NULL)
-    return NULL;
+  struct Person *returnValue = malloc(sizeof(struct Person));  
+  returnValue->name = name;
+  returnValue->age = age;
+  returnValue->t = t;
   return returnValue;
 }
 
 
-static struct Person *insertStart(struct Person *people, char *name, char *roomNumber, char *programmeName, int age) 
+static struct Person *insertStart(struct Person *people, char *name, int age, 
+                                   enum staff_or_student t, char *studentData, 
+                                   char *staffData) 
 {
-  struct Person* newP = newPerson(name,roomNumber,programmeName);
+  struct Person* newP = newPerson(name, staffData, studentData, age, t);
   newP->name = name;
   newP->age = age;
   newP->next = people;
   return newP;
 }
 
-static struct Person *insertEnd(struct Person *people, char *name, char *roomNumber, char *programmeName, int age)
+static struct Person *insertEnd(struct Person *people, char *name, int age, 
+                                   enum staff_or_student t, char *studentData, 
+                                   char *staffData)
 {
-  struct Person* newP = newPerson(name, roomNumber, programmeName);
+  struct Person* newP = newPerson(name, staffData, studentData, age, t);
 
   if(people == NULL)
   {
@@ -111,14 +113,12 @@ static struct Person *insertEnd(struct Person *people, char *name, char *roomNum
   }
 
 }
-//
-//read data and creates lists elements accordingly
-//
+
 static struct Person *insertSorted(struct Person *people, char *name, int age, 
                                    enum staff_or_student t, char *studentData, 
                                    char *staffData, int (*compare_people)())
 {
-  struct Person* newP = newPerson(name, staffData, studentData);
+  struct Person* newP = newPerson(name, staffData, studentData, age, t);
 
   newP->name = name;
 
@@ -126,7 +126,7 @@ static struct Person *insertSorted(struct Person *people, char *name, int age,
 
   newP->t = t;
 
-  if(studentData != "")
+  if(strcmp(studentData,  "") != 0)
     newP->data.programmeName = studentData;
   else
      newP->data.roomNumber = staffData;
@@ -148,69 +148,98 @@ static struct Person *insertSorted(struct Person *people, char *name, int age,
   }
 
 }
-static struct Person *insert_sorted(struct Person *people, char *name, int age, 
+struct Person *insert_sorted(struct Person *people, char *name, int age, 
                                    enum staff_or_student t, char *studentData, 
                                    char *staffData, int (*compare_people)())
 {
-  struct Person *newP = newPerson(name,staffData,studentData);
-  
-  newP->name = name;
+  struct Person *newP = newPerson(name,staffData,studentData, age, t);
 
-  newP->age = age;
-
-  newP->t = t;
-
-  if(studentData != "")
+  if(strcmp(studentData, "") != 0)
     newP->data.programmeName = studentData;
   else
-     newP->data.roomNumber = staffData;
+    newP->data.roomNumber = staffData;
   
   struct Person **ptr2ptr = NULL;
-  struct Person *aux = people;
+  
   ptr2ptr = &people;
   
   while((*ptr2ptr) != NULL && compare_people((*ptr2ptr), newP) < 0){
-      *ptr2ptr = (*ptr2ptr)->next;
-  }
-  newP->next = *ptr2ptr;
-  *ptr2ptr = newP;
-  
-  
- /* for(ptr2ptr = &people; *ptr2ptr != NULL; ptr2ptr = &(*ptr2ptr)->next)
-  {
-      printf("x\n");
-      if(compare_people((*ptr2ptr),newP) < 0)
-        *ptr2ptr = (*ptr2ptr)->next;
-  }
-  newP->next = *ptr2ptr;
-  *ptr2ptr = newP;*/
-  
- // printList(people);
+      ptr2ptr = &((*ptr2ptr)->next);
+  }  
+    newP->next = *ptr2ptr;
+    *ptr2ptr = newP;
   
   return people;
 }
+
 int main(int argc, char **argv) 
 {
   struct Person *people = NULL;
-  
+  //
+  //InNSERT START
+  //
+  printf("PART 1 : INSERT AT START OF LIST\n\n");
+  for (int i = 0; i< HOW_MANY; i++) 
+  {
+    people = insertStart(people, names[i], ages[i], TYPE[i], studentData[i], 
+                          staffData[i]);
+  }
+  printList(people);
+  people = NULL;
+  //
+  //INSERT END
+  //
+  printf("PART 2 : INSERT AT END OF LIST\n\n");
+  for (int i = 0; i< HOW_MANY; i++) 
+  {
+    people = insertEnd(people, names[i], ages[i], TYPE[i], studentData[i], 
+                          staffData[i]);
+  }
+  printList(people);
+  people = NULL;
+
+  //
+  //INSERT SORTED BY NAME
+  //
+
+  printf("PART 3 : INSERT SORTED LIST BY NAME\n\n");
+  for (int i = 0; i< HOW_MANY; i++) 
+  {
+    people = insertSorted(people, names[i], ages[i], TYPE[i], studentData[i], 
+                          staffData[i],compare_people_by_name);
+  }
+  printList(people);
+  people = NULL;
+
+  //
+  //INSERT SORTED BY AGE
+  //
+
+  printf("PART 4 : INSERT SORTED LIST BY AGE\n\n");
+  for (int i = 0; i< HOW_MANY; i++) 
+  {
+    people = insertSorted(people, names[i], ages[i], TYPE[i], studentData[i], 
+                          staffData[i],compare_people_by_age);
+  }
+  printList(people);
+  people = NULL;
+
+  //
+  //INSERT SORTED WITH POINTER TO POINTER
+  //
+
+  printf("PART 6 : INSERT SORTED LIST BY NAME USING A POINTER TO A POINTER\n\n");
   for (int i = 0; i< HOW_MANY; i++) 
   {
     people = insert_sorted(people, names[i], ages[i], TYPE[i], studentData[i], 
-                          staffData[i] ,compare_people_by_age);
+                          staffData[i] ,compare_people_by_name);
   }
-  //
-  //
-  //
    
   printList(people);
    
   while(people  != NULL)
   {
-    free(people->data.programmeName);
-    free(people->data.roomNumber);
-    free(people->name);
     free(people);
-
     people = people->next;
   }
   return 0;
