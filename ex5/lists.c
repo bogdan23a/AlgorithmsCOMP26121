@@ -164,6 +164,7 @@ struct Person *insert_sorted(struct Person *people, char *name, int age,
   ptr2ptr = &people;
   
   while((*ptr2ptr) != NULL && compare_people((*ptr2ptr), newP) < 0){
+      
       ptr2ptr = &((*ptr2ptr)->next);
   }  
     newP->next = *ptr2ptr;
