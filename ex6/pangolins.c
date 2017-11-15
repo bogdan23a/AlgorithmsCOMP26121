@@ -2,51 +2,78 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-typedef struct Tree
+enum question_or_object{QUESTION,OBJECT,NEITHER};
+struct Tree
 {
-  tree *yes;
-  tree *no;
-  typedef enum question_or_object{QUESTION,OBJECT} type;
+  struct Tree *yes;
+  struct Tree *no;
+  enum question_or_object type;
   char *name;
 }*nodes;
 
-void printNode()
+void printNode(struct Tree *tree)
 {
-  if(nodes->info.type == question_or_object.QUESTION)
-    printf("Question: %s\nYes: %s\nNo: %s\n", nodes->name, nodes->yes->name,nodes->no->name);
-  else
-    printf("Object: %s\n", nodes->name);
 
+  if(tree->name != "")
+  {
+    if(tree->yes->name != "")
+    {
+
+      if(tree->no->name != "")
+        printf("Question: %s\nYes: %s\nNo: %s\n", tree->name, tree->yes->name, tree->no->name);
+      else
+        printf("Question: %s\nYes: %s\nNo: [NOTHING]\n", tree->name, tree->yes->name);
+    }
+    else
+    {
+
+      if(tree->no->name != "")
+        printf("Question: %s\nYes: [NOTHING]\nNo: %s\n", tree->name, tree->no->name);
+      else
+        printf("Question: %s\nYes: [NOTHING]\nNo: [NOTHING]\n", tree->name);
+    }
+  }
+  
 }
 
-Tree *newTree(char *name, question_or_object type)
+struct Tree *newTree(char *name, enum question_or_object type)
 {
-  Tree *returnValue = malloc(sizeof(Tree));  
+  struct Tree *returnValue = malloc(sizeof(struct Tree));  
   returnValue->name = name;
   returnValue->type = type;
   return returnValue;
 }
 
-void initTree()
+struct Tree *make(char *name, enum question_or_object type,struct Tree *yes, struct Tree *no)
 {
-  Tree pizza = makeObject("a pizza", question_or_object.OBJECT, NULL, NULL);
-  Tree monkey = makeObject("a monkey", question_or_object.OBJECT, NULL, NULL);
-  Tree cat = makeObject("a cat", question_or_object.OBJECT, NULL, NULL);
-  Tree isPizza = makeObject("Is it flat, round and edible?", pizza, )
-  Tree isMonkey = makeObject("Does it have a tail?", question_or_object.QUESTION, monkey, )
+  struct Tree *node = newTree(name,type);
+  node->yes = yes;
+
+  node->no = no;
+ 
+  return node;
+
 
 }
 
-Tree makeObject(char *name, question_or_object type,char *yes, char *no,)
+struct Tree *initTree()
 {
-    *node = newTree(name,type);
-    *node->yes = newTree(yes,)
-    return node;
+  struct Tree *neither = make("", NEITHER, NULL, NULL);
+  struct Tree *pizza = make("a pizza", OBJECT, neither, neither);
+  struct Tree *monkey = make("a monkey", OBJECT, neither, neither);
+  struct Tree *cat = make("a cat", OBJECT, neither, neither);
+  struct Tree *isPizza = make("Is it flat, round and edible?", QUESTION,  pizza, neither);
+  struct Tree *isMonkey = make("Does it have a tail?", QUESTION, monkey, isPizza);
 
-
+  return isMonkey;
 }
+
+
 int main(int argc, char **argv) 
 {
-
+  struct Tree *pangolins = initTree();
+  printNode(pangolins);
+  printNode(pangolins->yes);
+  printNode(pangolins->no->no);
+  printNode(pangolins->no);
 }
