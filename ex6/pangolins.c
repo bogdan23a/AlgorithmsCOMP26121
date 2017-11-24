@@ -14,12 +14,11 @@ struct Tree
 void printNode(struct Tree *tree)
 {
 
-  if(tree->name != "")
+  if(tree->type == QUESTION)
   {
-    if(tree->yes->name != "")
+    if(tree->yes != NULL)
     {
-
-      if(tree->no->name != "")
+      if(tree->no != NULL)
         printf("Question: %s\nYes: %s\nNo: %s\n", tree->name, tree->yes->name, tree->no->name);
       else
         printf("Question: %s\nYes: %s\nNo: [NOTHING]\n", tree->name, tree->yes->name);
@@ -27,13 +26,28 @@ void printNode(struct Tree *tree)
     else
     {
 
-      if(tree->no->name != "")
+      if(tree->no != NULL)
         printf("Question: %s\nYes: [NOTHING]\nNo: %s\n", tree->name, tree->no->name);
       else
         printf("Question: %s\nYes: [NOTHING]\nNo: [NOTHING]\n", tree->name);
     }
   }
-  
+  else
+    printf("Object: %s\n", tree->name);
+
+  printf("\n");
+}
+
+void treePrint(struct Tree *pangolins)
+{
+  if(pangolins == NULL)
+    return;
+  else
+  {
+    printNode(pangolins);
+    treePrint(pangolins->no);
+    treePrint(pangolins->yes);
+  }
 }
 
 struct Tree *newTree(char *name, enum question_or_object type)
@@ -58,11 +72,10 @@ struct Tree *make(char *name, enum question_or_object type,struct Tree *yes, str
 
 struct Tree *initTree()
 {
-  struct Tree *neither = make("", NEITHER, NULL, NULL);
-  struct Tree *pizza = make("a pizza", OBJECT, neither, neither);
-  struct Tree *monkey = make("a monkey", OBJECT, neither, neither);
-  struct Tree *cat = make("a cat", OBJECT, neither, neither);
-  struct Tree *isPizza = make("Is it flat, round and edible?", QUESTION,  pizza, neither);
+  struct Tree *pizza = make("a pizza", OBJECT, NULL, NULL);
+  struct Tree *monkey = make("a monkey", OBJECT, NULL, NULL);
+  struct Tree *cat = make("a cat", OBJECT, NULL, NULL);
+  struct Tree *isPizza = make("Is it flat, round and edible?", QUESTION,  pizza, cat);
   struct Tree *isMonkey = make("Does it have a tail?", QUESTION, monkey, isPizza);
 
   return isMonkey;
@@ -72,8 +85,54 @@ struct Tree *initTree()
 int main(int argc, char **argv) 
 {
   struct Tree *pangolins = initTree();
-  printNode(pangolins);
-  printNode(pangolins->yes);
-  printNode(pangolins->no->no);
-  printNode(pangolins->no);
+  /*treePrint(pangolins);
+  char *input;
+  fgets(input,200,stdin);
+  printf("%s\n", input);*/
+  int isFin = 0;
+  while(!isFin)
+  {
+
+    if(pangolins->yes == NULL && pangolins->no == NULL)
+    {
+      printf("Is it %s\n", pangolins->name);
+      char *input = malloc(4 * sizeof(char));
+      fgets(input,4,stdin);
+      if(strcmp(input,"yes") == 0)
+      {
+        printf("I win!\n");
+        isFin = 1;
+      }
+      else
+      {
+        printf("Oh. Well you win then\nWhat were you thinking of?\n");
+        char *object = malloc(20 * sizeof(char));
+        fgets(object, 1000, stdin);
+        printf("Please give me a question about biscuit, so I can tell the difference between %s and %s\n", object, pangolins->name);
+        char *question = malloc(100 * sizeof(char));
+        fgets(question, 1000, stdin);
+        printf("What is the answer to the question for %s\n", object);
+        char *answer= malloc(4 * sizeof(char));
+        fgets(answer, 1000, stdin);
+        struct Tree *x = make(object, OBJECT, NULL, NULL);
+        struct Tree *isX;
+        if(strcmp(answer, "yes") == 0)
+          isX = make(question, QUESTION, x, NULL);
+        else
+          isX = make(question, QUESTION, NULL, x);
+        pangolins->no = isX;
+        isFin = 1;
+      }
+    }
+    else
+    {
+      printf("%s\n", pangolins->name);
+      char *answer = malloc(4 * sizeof(char));
+      fgets(answer,1000,stdin);
+      if(strcmp(answer,"yes") == 0)
+        pangolins=pangolins->yes;
+      else
+        pangolins=pangolins->no;
+    }
+  }
 }
