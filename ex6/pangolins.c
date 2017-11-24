@@ -107,13 +107,13 @@ int main(int argc, char **argv)
       {
         printf("Oh. Well you win then\nWhat were you thinking of?\n");
         char *object = malloc(20 * sizeof(char));
-        fgets(object, 1000, stdin);
+        fgets(object, 20 * sizeof(char), stdin);
         printf("Please give me a question about biscuit, so I can tell the difference between %s and %s\n", object, pangolins->name);
         char *question = malloc(100 * sizeof(char));
-        fgets(question, 1000, stdin);
+        fgets(question, 100 * sizeof(char), stdin);
         printf("What is the answer to the question for %s\n", object);
         char *answer= malloc(4 * sizeof(char));
-        fgets(answer, 1000, stdin);
+        fgets(answer, 4 * sizeof(char), stdin);
         struct Tree *x = make(object, OBJECT, NULL, NULL);
         struct Tree *isX;
         if(strcmp(answer, "yes") == 0)
@@ -128,7 +128,7 @@ int main(int argc, char **argv)
     {
       printf("%s\n", pangolins->name);
       char *answer = malloc(4 * sizeof(char));
-      fgets(answer,1000,stdin);
+      fgets(answer,4,stdin);
       if(strcmp(answer,"yes") == 0)
         pangolins=pangolins->yes;
       else
