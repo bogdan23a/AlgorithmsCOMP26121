@@ -1,0 +1,51 @@
+Question:Does it have a tail?
+Question:Does it live in the jungle?
+Question:Is it a bird?
+Object:a parot
+Question:Does it have an orange fur?
+Object:a tiger
+Object:a lion
+Question:Is it domestic?
+Question:Does it bark?
+Object:a dog
+Object:a cat
+Question:What does the fox say?
+Object:a fox
+Question:Is it cute?
+Object:an otter
+Object:a monkey
+Question:Is it stupid?
+Question:Does it have a muie proasta?
+Object:Lazar
+Object:muian
+Question:Is it made by apple?
+Question:Is it a laptop?
+Object:a macbook
+Question:Is it a watch?
+Object:an applewatch
+Object:an iphone
+Question:Do you put them in your ears?
+Object:headphones
+Question:Do you use it to type on the computer?
+Object:a keyboard
+Question:Do you see the time on it?
+Question:Does it give time for HIV?
+Object:ma dick
+Object:a clock
+Question:Do you use them to see better?
+Object:a pair of glasses
+Question:Do you use it to store things?
+Question:Is it fancy?
+Object:a suitcase
+Object:a bag
+Question:Do you use it to shelter yourself?
+Question:Do you hold it in your hand?
+Object:an umbrella
+Object:a jacket
+Question:Does it lead the way?
+Object:an exit sign
+Question:Do you sit on it?
+Object:a chair
+Question:Does it beep anoyingly?
+Object:a fire alarm
+Object:a pangolin
