@@ -38,6 +38,7 @@ unsigned long long dl(unsigned long long result, unsigned long long base, unsign
     currentPower = 1;
     for(int j = 1; j <= i; j++)
       currentPower *= base;
+    // printf("currentPower : %d\n currentIndex :%d\n", currentPower, i);
     if(currentPower % mod == result)
       return i;
   }
@@ -48,7 +49,7 @@ unsigned long long imp(unsigned long long y, unsigned long long mod)
     if(fme(y*i, 1, mod) == 1)
       return i;
 }
-/*
+
 void doElGamal()
 {
   char *input = malloc(100 * sizeof(char));
@@ -97,10 +98,9 @@ void doElGamal()
       unsigned long long M = atoi(snt);
       srand(time(NULL));
       unsigned long long k = rand() % 65537;
+      
       printf("%d\n", k);
-      printf("%d\n", binary(k));
-
-      unsigned long long a = fme(3, binary(k), 65537);
+      unsigned long long a = fme(3, k, 65537);
       unsigned long long b = ((M % 65537) * fme(atoi(rpkt), k, 65537)) % 65537;
 
       printf("The encrypted key is: (%d, %d)\n", a, b);
@@ -121,21 +121,52 @@ void doElGamal()
       fgets(privateKr, 100 * sizeof(char), stdin);
       pk = strtok(privateKr, ":\n");
       
-      printf("%d\n", dl(a, 3, 65537));
-      printf("The decrypted secret is: ");
+
+      unsigned long long k = dl(a, 3, 65537);
+
+      // printf("%d\n", k);
+      unsigned long long M = imp(fme(atoi(pk), k, 65537), 65537);
+
+      printf("The decrypted secret is: %d\n", M);
     }
     else
     if(strcmp(tokenized, "x") == 0)
       notExit = 0;
   }
 }
-*/
+
 int main(int argc, char **argv) 
 {
   // printf("%d\n", hcf(atoi(argv[1]), atoi(argv[2])));
   // printf("%d\n", fme(5, atoi(argv[1]), 19));
   // printf("%d\n", dl(fme(5, atoi(argv[1]), 19), 5, 19));
-  printf("%d\n", imp(atoi(argv[1]), atoi(argv[2])));
+  // printf("%d\n", imp(atoi(argv[1]), atoi(argv[2])));
 
-  //doElGamal();
+  doElGamal();
+  // srand(time(NULL));
+  // unsigned long long k = rand() % 65537;
+  // printf("random k = %d\n", k);
+
+  // unsigned long long M = atoi(argv[1]);
+  // printf("secret message M = %d\n", M);
+
+  // unsigned long long privateKey = atoi(argv[2]);
+  // printf("private key = %d\n", privateKey);
+
+  // unsigned long long a = fme(3, k, 65537);
+  // printf("a = fme( %d, %d, %d ) = %d\n", 3, k, 65537, a);
+
+  // unsigned long long b = ((M % 65537) * fme(privateKey, k, 65537)) % 65537;
+  // printf("b = ((%d , %d) * fme( %d, %d, %d) ,%d  =  %d\n", M, 65537, privateKey, k, 65537, 65537, b);
+
+
+
+
+  
+  
+  // // printf("a = %d, b = %d\n", a, b);
+
+
+  // printf("decripted k = %d\n",dl(a, 3, 65537));
+  // printf("decripted M = %d\n", imp(fme(privateKey, dl(a, 3, 65537), 65537), 65537));
 }
