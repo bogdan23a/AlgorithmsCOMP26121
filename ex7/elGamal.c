@@ -2,39 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <gmp.h>
+//#include <gmp.h>
+
 unsigned long long hcf(unsigned long long a, unsigned long long b)
-{
-  unsigned long long d;
-  mpz_init(d);
-  mpz_set_str(d,"0",10);
-  
-  while(a % 2 == 0 && b % 2 == 0)
-  {
-    a = a/2;
-    b = b/2;
-    d = d + 1;
-  }
-  while(a != b)
-  {
-    if(a % 2 ==0)
-      a = a/2;
-    else
-      if(b % 2 == 0)
-        b = b/2;
-      else
-        if(a > b)
-          a = (a-b)/2;
-        else
-          b = (b-a)/2;
-  }
-  unsigned long long g = a;
-  unsigned long long res = g;
-  for(int i = 1; i <= d; i++)
-    res *= 2;
-  return res;
-}
-unsigned long long hcf1(unsigned long long a, unsigned long long b)
 {
   unsigned long long r = a % b;
   while(r != 0)
@@ -45,52 +15,20 @@ unsigned long long hcf1(unsigned long long a, unsigned long long b)
   }
   return b;
 }
-unsigned long long reverse(unsigned long long normal)
-{
-  unsigned long long reversed = 0;
-  unsigned long long base = 10;
-  while(normal != 0)
-  {
-    reversed = reversed * base + (normal % 10);
-    normal /= 10;
-  }
-  return reversed;
-}
-unsigned long long binary(unsigned long long decimal)
-{
-  unsigned long long bForm = 0;
-  unsigned long long remainder = 0;
-  unsigned long long rememberZero = 0;
-  while(decimal != 0)
-  {
-    remainder = decimal % 2;
-    bForm = bForm * 10 + remainder;
-    if(bForm == 0)
-      rememberZero++;
-    decimal /= 2;
-  }
-  printf("b fprm : %d reverse : %d\n", bForm, reverse(bForm));
-  bForm = reverse(bForm);
-  for(int i = 1; i <= rememberZero;i++)
-    bForm *= 10;
-  return bForm;
-}
 
 unsigned long long fme(unsigned long long  base, unsigned long long power, unsigned long long mod)
 {
-  unsigned long long currentResult = base % mod;
   unsigned long long result = 1;
+  base %= mod;
   while(power != 0)
   {
 
-    if(power % 10 == 1)
-    {
-      result *= currentResult;
-    }
-    currentResult = (currentResult * currentResult) % mod;
-    power /= 10;
+    if(power & 1)
+      result = (result * base) % mod;
+    power = power>>1;
+    base = (base * base) % mod;
   }
-  return result % mod;
+  return result;
 }
 unsigned long long dl(unsigned long long result, unsigned long long base, unsigned long long mod)
 {
@@ -110,6 +48,7 @@ unsigned long long imp(unsigned long long y, unsigned long long mod)
     if(fme(y*i, 1, mod) == 1)
       return i;
 }
+/*
 void doElGamal()
 {
   char *input = malloc(100 * sizeof(char));
@@ -190,12 +129,13 @@ void doElGamal()
       notExit = 0;
   }
 }
+*/
 int main(int argc, char **argv) 
 {
-  // printf("%d\n", hcf1(atoi(argv[1]), atoi(argv[2])));
-  // printf("%d\n", fme(5, binary(atoi(argv[1])), 19));
+  // printf("%d\n", hcf(atoi(argv[1]), atoi(argv[2])));
+  printf("%d\n", fme(5, atoi(argv[1]), 19));
   // printf("%d\n", dl(8, 3, 17));
   // printf("%d\n", imp(8, 13));
 
-  doElGamal();
+  //doElGamal();
 }
