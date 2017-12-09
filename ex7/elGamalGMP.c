@@ -37,15 +37,15 @@ unsigned long long dl(unsigned long long result, unsigned long long base, unsign
     currentPower = 1;
     for(int j = 1; j <= i; j++)
       currentPower *= base;
-
+    printf("currP: \n", currentPower);
     if(currentPower % mod == result)
       return i;
   }
 }
-unsigned long long imp(unsigned long long y, unsigned long long mod, unsigned long long result)
+unsigned long long imp(unsigned long long y, unsigned long long mod)
 {
   for(int i = 1; i < mod; i++)
-    if(((i % mod) * (y % mod)) % mod == result)
+    if(fme(y*i, 1, mod) == 1)
       return i;
 }
 
@@ -66,14 +66,11 @@ void doElGamal()
   char *pk = malloc(100 * sizeof(char));
   char *first = malloc(100 * sizeof(char));
   char *second = malloc(100 * sizeof(char));
-  char *comp = malloc(100 * sizeof(char));
-  char *compt = malloc(100 * sizeof(char));
-  comp = "5";
   int notExit = 1;
   while(notExit)
   {
     
-    printf("Prime modulus is 65537\nPrimitive root wrt 65537 is 3\nChoose: e (encrypt) | d (decrypt) | k (get public key)  | x(exit)?\n");
+    printf("Prime modulus is 65537\nPrimitive root wrt 65537 is 3\nChoose: e (encrypt) | d (decrypt) | k (get public key) | x(exit)?\n");
     fgets(input, 100 * sizeof(char), stdin);
     tokenized = strtok(input, ":\n");
     unsigned long long privateKey = 0;
@@ -99,7 +96,7 @@ void doElGamal()
       
       unsigned long long M = atoi(snt);
       srand(time(NULL));
-      unsigned long long k = rand() % atoi(comp);
+      unsigned long long k = rand() % 5;
       
       printf("%d\n", k);
       unsigned long long a = fme(3, k, 65537);
@@ -126,9 +123,9 @@ void doElGamal()
 
       unsigned long long k = dl(a, 3, 65537);
 
-      
-      unsigned long long M = imp(fme(fme(3, atoi(pk), 65537), k, 65537), 65537, b);
-      printf("%d\n", M);
+      // printf("%d\n", k);
+      unsigned long long M = imp(fme(atoi(pk), k, 65537), 65537);
+
       printf("The decrypted secret is: %d\n", M);
     }
     else
