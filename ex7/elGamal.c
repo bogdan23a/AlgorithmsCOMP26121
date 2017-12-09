@@ -134,7 +134,7 @@ int main(int argc, char **argv)
 {
   // printf("%d\n", hcf(atoi(argv[1]), atoi(argv[2])));
   printf("%d\n", fme(5, atoi(argv[1]), 19));
-  // printf("%d\n", dl(8, 3, 17));
+  printf("%d\n", dl(fme(5, atoi(argv[1]), 19), 5, 19));
   // printf("%d\n", imp(8, 13));
 
   //doElGamal();
