@@ -1,0 +1,271 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <gmp.h>
+
+void hcf(mpz_t result, mpz_t a, mpz_t b)
+{
+  mpz_t r;
+  mpz_init(r);
+  mpz_mod(r, a, b);
+  mpz_t zero;
+  mpz_init(zero);
+  while(mpz_cmp(r, zero) != 0)
+  {
+    mpz_set(a,b);
+    //a = b;
+    mpz_set(b,r);
+    // b = r;
+    mpz_mod(r, a, b);
+    // r = a%b;
+  }
+  mpz_set(result, b);
+}
+
+void fme(mpz_t result, mpz_t base, mpz_t power, mpz_t mod)
+{
+  mpz_powm(result, base, power, mod); 
+}
+
+void dl(mpz_t result, mpz_t res, mpz_t base, mpz_t mod)
+{
+  mpz_t currentPower;
+  mpz_init(currentPower);
+  int i;
+  for(i = 1; mpz_cmp_ui(mod, i) > 0; i++)
+  {
+    mpz_set_ui(currentPower, 1);
+    int j;
+    for(j = 1; j <= i; j++)
+      mpz_mul(currentPower, currentPower, base);
+    mpz_t modul;
+    mpz_init(modul);
+    mpz_mod(modul, currentPower, mod);
+    if(mpz_cmp(modul, res) == 0){
+      mpz_set_ui(result, i);
+      break;
+    }
+  }
+}
+
+void imp(mpz_t result, mpz_t y, mpz_t mod, mpz_t res)
+{
+  int i;
+  for(i = 1; mpz_cmp_ui(mod, i) > 0; i++){
+    mpz_t first;
+    mpz_init(first);
+
+    mpz_t second;
+    mpz_init(second);
+
+    mpz_t integer;
+    mpz_init(integer);
+    mpz_set_ui(integer, i);
+
+    mpz_mod(first, integer, mod);
+    mpz_mod(second, y, mod);
+
+    mpz_t prod;
+    mpz_init(prod);
+    mpz_mul(prod, first, second);
+
+    mpz_t total;
+    mpz_init(total);
+    mpz_mod(total, prod, mod);
+
+    if(mpz_cmp(total, res) == 0){
+      mpz_set_ui(result, i);
+      break;
+    }
+  }
+}
+
+void doElGamal()
+{
+
+  char *input = malloc(5 * sizeof(char));
+  char *tokenized = malloc(100 * sizeof(char));
+  char *privateK = malloc(100 * sizeof(char));
+  char *pkt = malloc(100 * sizeof(char));
+  char *secretNumber = malloc(100 * sizeof(char));
+  char *snt = malloc(100 * sizeof(char));
+  char *rPrivateKey = malloc(100 * sizeof(char));
+  char *rPublicKey = malloc(100 * sizeof(char));
+  char *rpkt = malloc(100 * sizeof(char));
+  char *message = malloc(100 * sizeof(char));
+  char *msgt = malloc(100 * sizeof(char));
+  char *privateKr = malloc(100 * sizeof(char));
+  char *pk = malloc(100 * sizeof(char));
+  char *first = malloc(100 * sizeof(char));
+  char *second = malloc(100 * sizeof(char));
+  int notExit = 1;
+  while(notExit)
+  {
+    
+    gmp_printf("Prime modulus is 65537\nPrimitive root wrt 65537 is 3\nChoose: e (encrypt) | d (decrypt) | k (get public key) | x(exit)?\n");     
+
+    fgets(input, 5 * sizeof(char), stdin);
+    tokenized = strtok(input, "\n");
+
+    if(strcmp(tokenized, "k")  == 0)
+    {
+      gmp_printf("Type private key: ");
+      fgets(privateK, 100 * sizeof(char), stdin);
+     
+      pkt = strtok(privateK, ":\n");
+    
+      mpz_t public;
+      mpz_init(public);
+
+      mpz_t base;
+      mpz_init(base);
+      mpz_set_ui(base, 3);
+
+      mpz_t prime;
+      mpz_init(prime);
+      mpz_set_ui(prime, 65537);
+
+      mpz_t privateKeyTok;
+      mpz_init(privateKeyTok);
+      mpz_set_str(privateKeyTok, pkt, 10);
+
+       
+      fme(public, base, privateKeyTok, prime);
+      gmp_printf("Public key is: %Zd\n", public);
+    }
+    else
+    if(strcmp(tokenized, "e") == 0)
+    {
+      gmp_printf("Type secret number to send: ");
+      fgets(secretNumber, 100 * sizeof(char), stdin);
+      
+      snt = strtok(secretNumber, ":\n");
+      printf("Type recipent's public key: ");
+      fgets(rPublicKey, 100 * sizeof(char), stdin);
+     // rpkt = strtok(rPublicKey, "\n");
+      
+      mpz_t M;
+printf("%s", secretNumber);
+      mpz_init(M); 
+      printf("%s", snt);
+      mpz_set_str(M, snt, 10);
+      gmp_printf("%s", snt);
+      gmp_randstate_t randstate;
+      
+      mpz_t k;
+      mpz_init(k);
+      mpz_set_ui(k, gmp_urandomm_ui(randstate, 10));
+
+      
+      mpz_t a;
+      mpz_init(a);
+
+      mpz_t base;
+      mpz_init(base);
+      mpz_set_ui(base, 3);
+     
+      mpz_t prime;
+      mpz_init(prime);
+      mpz_set_ui(prime, 65537);
+
+      fme(a, base, k, prime);
+
+      mpz_t fmeBase;
+      mpz_init(fmeBase);
+      mpz_set_str(fmeBase, rpkt, 36);
+
+      mpz_t second;
+      mpz_init(second);
+      fme(second, fmeBase, k, prime);
+     
+      mpz_t first;
+      mpz_init(first);
+      mpz_mod(first, M, prime);
+
+      mpz_t b;
+      mpz_init(b);
+ 
+      mpz_mul(b, first, second);
+      mpz_mod(b, b, prime);
+      gmp_printf("The encrypted key is: (%Zd, %Zd)\n", a, b);
+    }
+    else
+    if(strcmp(tokenized, "d") == 0)
+    {
+
+      gmp_printf("Type in received message in form (a,b): ");
+      scanf("%s", message);
+      // mpz_inp_str(message, stdin, 36);
+      msgt = strtok(message, ":\n");
+
+      first = strtok(msgt,"(), ");
+      second = strtok(NULL, "(), ");
+      mpz_t a;
+      mpz_init(a);
+      mpz_set_str(a,first, 36);
+
+      mpz_t b;
+      mpz_init(b);
+      mpz_set_str(b, second, 36);
+
+      gmp_printf("Type in your private key: ");
+      scanf("%s", privateKr);
+      //mpz_inp_str(privateKr, stdin, 36);
+      pk = strtok(privateKr, ":\n");     
+  
+      mpz_t base;
+      mpz_init(base);
+      mpz_set_ui(base, 3);
+
+      mpz_t k;
+      mpz_init(k);
+
+      mpz_t prime;
+      mpz_init(prime);
+      mpz_set_ui(prime, 65537);
+ 
+      dl(k, a, base, prime);
+
+      // printf("%d\n", k);
+      mpz_t M;
+      mpz_init(M);
+
+      mpz_t fmeBase;
+      mpz_init(fmeBase);
+      mpz_set_str(fmeBase, pk, 36);
+
+      mpz_t y;
+      mpz_init(y);
+      fme(y, fmeBase, k, prime);
+     
+      imp(M, y, prime, b);
+
+      printf("The decrypted secret is: %d\n", M);
+    }
+    else
+    if(strcmp(tokenized, "x") == 0)
+      notExit = 0;
+  }
+}
+
+int main(int argc, char **argv) 
+{
+ /* mpz_t result;
+  mpz_init(result);
+  mpz_t arg1;
+  mpz_t arg2;
+  mpz_t arg3;
+  mpz_init(arg1);
+  mpz_init(arg2);
+  mpz_init(arg3);
+  mpz_set_ui(arg1, atoi(argv[1]));
+  mpz_set_ui(arg2, atoi(argv[2]));
+  mpz_set_ui(arg3, atoi(argv[3]));
+  // hcf(result, arg1, arg2);
+  // fme(result, arg1, arg2, arg3);
+  //  dl(result, arg1, arg2, arg3);
+  //  imp(result, arg1, arg2, arg3);
+  gmp_printf("%Zd\n", result);
+  */doElGamal();
+}

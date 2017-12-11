@@ -36,7 +36,7 @@ int read_file(char *infile, int N)
   return(c);
 }
 
-int comp_on_rating(const void *a, const void *b)
+int comp_on_rating(struct book *a, struct book *b)
 {
   if ((*(B *)a).rating < (*(B *)b).rating)
   {  
@@ -55,7 +55,7 @@ int comp_on_rating(const void *a, const void *b)
   }  
 }
 
-int comp_on_relev(const void *a, const void *b)
+int comp_on_relev(struct book *a, struct book *b)
 {
  
   if ((*(B *)a).relevance < (*(B *)b).relevance)
@@ -75,7 +75,7 @@ int comp_on_relev(const void *a, const void *b)
   }  
 }
 
-int comp_on_price(const void *a, const void *b)
+int comp_on_price(struct book *a, struct book *b)
 {
  
   if ((*(B *)a).price < (*(B *)b).price)
@@ -128,14 +128,16 @@ int comp_on_price(const void *a, const void *b)
 //     quickSort(arr, pi + 1, high);
 //   }
 // }
-void quickSort(struct book arr[], int low, int high, int (*compar)(const void *, const void *))
+/*void quickSort(struct book arr[], int low, int high, int (*compar)(const void *, const void *))
 {
 
   if(low < high)
   {
     int i = low, j = high;
-    const void *x = arr[(i + j) / 2];
-    const void *current = arr[i];
+    const void *x;
+    ((struct book*)x) = arr[(i + j) / 2];
+    const void *current;
+    *((struct book*)current) = arr[i];
     do{
       while(compar(current,x) < 0) i++;
       while(compar(x,current) < 0) j--;
@@ -154,13 +156,77 @@ void quickSort(struct book arr[], int low, int high, int (*compar)(const void *,
     quickSort(arr, low, j, compar);
     quickSort(arr, i, high, compar);
   }
+}*/
+
+
+void merge(struct book arr[], int l, int m, int r, int (*compar)(struct book *, struct book *))
+{
+  int i, j, k;
+  int n1 = m - l + 1;
+  int n2 = r - m;
+
+  struct book L[n1], R[n2];
+
+  for(i = 0; i < n1; i++)
+    L[i] = arr[l + i];
+  for(j = 0; j < n2; j++)
+    R[j] = arr[m + 1 + j];
+
+  i = 0;
+  j = 0;
+  k = l;
+
+  while(i < n1 && j < n2)
+  {
+    if(compar(&L[i], &R[j]))
+    {
+    // printf("(Hai ca se poate cu %d si %d)\n", l, r);
+      arr[k] = L[i];
+      i++;
+    }
+    else
+    {
+      arr[k] = R[j];
+      j++;
+    }
+    k++;
+  }
+
+  while(i < n1)
+  {
+    arr[k] = L[i];
+    i++;
+    k++;
+  }
+
+  while(j < n2)
+  {
+    arr[k] = R[j];
+    j++;
+    k++;
+  }
+
+
 }
 
+void mergeSort(struct book arr[], int l, int r, int (*compar)(struct book *, struct book *))
+{
+
+  if(l < r)
+  {
+    int m = l + (r - l) / 2;
+
+    mergeSort(arr, l, m, compar);
+    mergeSort(arr, m + 1, r, compar);
+
+    merge(arr, l, m, r, compar);
+  }
+}
 void user_interface(int N)
 {
 
   // For Part 1 this function calls the sort function to sort on Price only
-  quickSort(list, 1,  N, comp_on_price);
+  mergeSort(list, 1,  N, comp_on_relev);
   
 
   // For Part 2 this function
@@ -179,9 +245,9 @@ void print_results(int N)
     {
       for(i=N-1;i>=N-20;i--)
       {  
-	  printf("%g %g %g %d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
-	  fprintf(fp, "%g %g %g %d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
-	  
+    printf("%g %g %g %d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
+    fprintf(fp, "%g %g %g %d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
+    
       }
       fclose(fp);
     }
