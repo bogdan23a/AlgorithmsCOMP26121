@@ -104,20 +104,16 @@ void merge(int l, int m, int r, int (*compar)(const void *, const void *))
   int n1 = m - l + 1;
   int n2 =  r - m;
 
-  B *L, *R;
-  L = (B *)malloc(n1*sizeof(B));
-  R = (B *)malloc(n2*sizeof(B));
-
+  struct book L[n1], R[n2];
 
 
   for(i = 0; i < n1; i++)
-    L[i] =  list[l + i];
+    L[n1] =  list[l + i];
   for(j = 0; j < n2; j++)
-    R[j] = list[m + 1 + j];
+    R[n2] = list[m + 1 + j];
 
-  i = 0;
-  j = 0;
-  k = l;
+
+  i = 0; j = 0; k = l;
 
   while(i < n1 && j < n2)
   {
@@ -155,7 +151,7 @@ void mergeSort(int l, int r, int (*compar)(const void *, const void *))
   int m;
   if(l < r)
   {
-    m = l + (r - l) / 2;
+    m = (l + r) / 2;
     // printf("(Hai ca nu se poate cu %d si %d)\n", l, r);
     mergeSort(l, m, compar);
     mergeSort(m + 1, r, compar);

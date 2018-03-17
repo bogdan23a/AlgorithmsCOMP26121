@@ -12,7 +12,7 @@ typedef struct book
   int ID;
 } B;
 
-B *list, *save;
+B *list;
 
 int read_file(char *infile, int N)
 {
@@ -36,7 +36,7 @@ int read_file(char *infile, int N)
   return(c);
 }
 
-int comp_on_rating(const void *a, const void *b)
+int comp_on_rating(struct book *a, struct book *b)
 {
   if ((*(B *)a).rating < (*(B *)b).rating)
   {  
@@ -55,7 +55,7 @@ int comp_on_rating(const void *a, const void *b)
   }  
 }
 
-int comp_on_relev(const void *a, const void *b)
+int comp_on_relev(struct book *a, struct book *b)
 {
  
   if ((*(B *)a).relevance < (*(B *)b).relevance)
@@ -75,7 +75,7 @@ int comp_on_relev(const void *a, const void *b)
   }  
 }
 
-int comp_on_price(const void *a, const void *b)
+int comp_on_price(struct book *a, struct book *b)
 {
  
   if ((*(B *)a).price < (*(B *)b).price)
@@ -95,25 +95,82 @@ int comp_on_price(const void *a, const void *b)
   }  
 }
 
-void print_results(int N);
+// void swap(int *a, int *b)
+// {
+//   int t=*a;
+//   *a = *b;
+//   *b = t;
+// }
+// int partition(int arr[], int low, int high)
+// {
+//   int pivot = arr[high];
+//   int i = (low - 1);
 
-void merge(int l, int m, int r, int (*compar)(const void *, const void *))
+//   for(int j = low; j <= high - 1; j++)
+//   {
+//     if(arr[j] <= pivot)
+//     {
+//       i++;
+
+//       swap(&arr[i], &arr[high]);
+//       return (i + 1);
+//     }
+//   }
+// }
+// void quickSort1(int arr[], int N)
+// {
+//   int low = 1;
+//   int high = N;
+//   if(low < high)
+//   {
+//     int pi = partition(arr, low, high);
+//     quickSort(arr, low, pi - 1);
+//     quickSort(arr, pi + 1, high);
+//   }
+// }
+/*void quickSort(struct book arr[], int low, int high, int (*compar)(const void *, const void *))
+{
+
+  if(low < high)
+  {
+    int i = low, j = high;
+    const void *x;
+    ((struct book*)x) = arr[(i + j) / 2];
+    const void *current;
+    *((struct book*)current) = arr[i];
+    do{
+      while(compar(current,x) < 0) i++;
+      while(compar(x,current) < 0) j--;
+
+      if(i <= j)
+      {
+        struct book temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+        i++;
+        j--;
+      }
+
+    } while(i <= j);
+
+    quickSort(arr, low, j, compar);
+    quickSort(arr, i, high, compar);
+  }
+}*/
+
+
+void merge(struct book arr[], int l, int m, int r, int (*compar)(struct book *, struct book *))
 {
   int i, j, k;
-
   int n1 = m - l + 1;
-  int n2 =  r - m;
+  int n2 = r - m;
 
-  B *L, *R;
-  L = (B *)malloc(n1*sizeof(B));
-  R = (B *)malloc(n2*sizeof(B));
-
-
+  struct book L[n1], R[n2];
 
   for(i = 0; i < n1; i++)
-    L[i] =  list[l + i];
+    L[i] = arr[l + i];
   for(j = 0; j < n2; j++)
-    R[j] = list[m + 1 + j];
+    R[j] = arr[m + 1 + j];
 
   i = 0;
   j = 0;
@@ -121,14 +178,15 @@ void merge(int l, int m, int r, int (*compar)(const void *, const void *))
 
   while(i < n1 && j < n2)
   {
-    if((compar)(&L[i], &R[j]) < 0)
+    if(compar(&L[i], &R[j]))
     {
-      list[k] = L[i];
+    // printf("(Hai ca se poate cu %d si %d)\n", l, r);
+      arr[k] = L[i];
       i++;
     }
     else
     {
-      list[k] = R[j];
+      arr[k] = R[j];
       j++;
     }
     k++;
@@ -136,39 +194,39 @@ void merge(int l, int m, int r, int (*compar)(const void *, const void *))
 
   while(i < n1)
   {
-    list[k] = L[i];
+    arr[k] = L[i];
     i++;
     k++;
   }
 
   while(j < n2)
   {
-    list[k] = R[j];
+    arr[k] = R[j];
     j++;
     k++;
   }
 
+
 }
 
-void mergeSort(int l, int r, int (*compar)(const void *, const void *))
+void mergeSort(struct book arr[], int l, int r, int (*compar)(struct book *, struct book *))
 {
-  int m;
+
   if(l < r)
   {
-    m = l + (r - l) / 2;
-    // printf("(Hai ca nu se poate cu %d si %d)\n", l, r);
-    mergeSort(l, m, compar);
-    mergeSort(m + 1, r, compar);
+    int m = l + (r - l) / 2;
 
-    merge(l, m, r, compar);
+    mergeSort(arr, l, m, compar);
+    mergeSort(arr, m + 1, r, compar);
+
+    merge(arr, l, m, r, compar);
   }
 }
-
 void user_interface(int N)
 {
 
   // For Part 1 this function calls the sort function to sort on Price only
-  mergeSort(0,  N-1, comp_on_price);
+  mergeSort(list, 1,  N, comp_on_relev);
   
 
   // For Part 2 this function
@@ -215,8 +273,6 @@ int main(int argc, char *argv[])
   N=atoi(argv[1]);
 
   list = (B *)malloc(N*sizeof(B));
-
-  save = (B *)malloc(N*sizeof(B));
   
   N=read_file(argv[2], N);
   

@@ -36,6 +36,8 @@ Question:Do you use them to see better?
 Object:a pair of glasses
 Question:Do you use it to store things?
 Question:Is it fancy?
+Question:Is it a computer?
+Object:laptop
 Object:a suitcase
 Object:a bag
 Question:Do you use it to shelter yourself?
